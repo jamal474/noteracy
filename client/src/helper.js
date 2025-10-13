@@ -1,2 +1,2 @@
-const BASE_URL = 'https://noteracy.mdshabbirjamal.one';
+const BASE_URL = 'https://noteracy.shabbirjamal.com';
 export default BASE_URL
