@@ -2,41 +2,11 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    /* position: absolute;
-    right : 0vw;
-    left : 0vw;
-    bottom: 0vh;  */
-    /* margin-top: 10px; */
-    margin-top: 5vh;
-    width: 100%;
-    height : 10vh;
+    height : 5vh;
     box-shadow: 0px -1px 0px white;
 }
-.footerd {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    /* position: absolute;
-    right : 0vw;
-    left : 0vw;
-    bottom: 0vh;  */
-    /* margin-top: 10px; */
-    margin-top: 5vh;
-    width: 100%;
-    height : 10vh;
-}
- .footerd::before {
-    content: "";
-    position: absolute;
-    width: 60%; 
-    height: 3%;
-    background: transparent;
-    top: 96%;
-    left: 40%;
-    box-shadow: 0px -1px 0px rgba(255, 255, 255);
-    z-index: -1; 
-  } 
-.c, .maker, .linkedin {
+
+.c, .github, .linkedin {
     margin : 0px 20px;
     font-family: unbounded;
     font-size: 1rem;
@@ -47,7 +17,6 @@
     transition-delay: 0s;
 }
 
-.c:hover, .maker:hover, .linkedin:hover {
-    box-shadow: 0px 2px 0px white;
+.c:hover, .github:hover, .linkedin:hover {
     cursor : pointer
 }

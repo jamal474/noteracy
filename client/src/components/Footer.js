@@ -1,13 +1,13 @@
-import React from 'react'
 import '../styles/Footer.css'
-const Footer = (props) => {
+
+const Footer = () => {
     var d = new Date(); 
     const currentYear = d.getFullYear(); 
   return (
-    <div className = {`${props.clname}`}>
-        <div className  = "c">{currentYear}&copy;</div>
-        <a href="http://mdshabbirjamal.one" className = "maker">MAKER</a>
-        <a href="https://www.linkedin.com/in/md-shabbir-jamal-0620781a0/" className = "linkedin">LINKEDIN</a>
+    <div className = "footer">
+        <div className  = "c">&copy;{currentYear}</div>
+        <a href="https://github.com/jamal474/NoteracyApp" className = "github">github</a>
+        <a href="https://www.linkedin.com/in/md-shabbir-jamal-0620781a0/" className = "linkedin">linkedin</a>
     </div>
   )
 }

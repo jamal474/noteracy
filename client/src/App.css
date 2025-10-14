@@ -17,6 +17,7 @@ body {
 }
 
 body::-webkit-scrollbar {
+  display: none;
   width: 0.5em;
 }
  
@@ -39,6 +40,16 @@ input,
 button {
     text-decoration: inherit;
     color: inherit;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
 }
 
 

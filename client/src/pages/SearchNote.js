@@ -1,5 +1,4 @@
 import React from 'react'
-import HeaderDashboard from '../components/HeaderDashboard'
 import { useParams } from 'react-router-dom'
 import SearchRes from '../components/SearchRes'
 import BASE_URL from '../helper'
@@ -10,8 +9,7 @@ import "../styles/SearchNote.css"
 const SearchNote = () => {
     const { query } = useParams();
     const [res, setRes] = React.useState();
-    const [ profileImg, setProfileImg ] = React.useState("");
-    const [isLoading, setIsLoading] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(true);
 
     React.useEffect(() => {
         try {
@@ -27,7 +25,6 @@ const SearchNote = () => {
                 .then((data) => {
                     if (data !== undefined) {
                         if (data.notes !== undefined && data.notes.length > 0) {
-                            setProfileImg(data.profileImg);
                             const sRes = data.notes.map((note) => {
                                 return <SearchRes
                                     key={note._id}
@@ -64,13 +61,13 @@ const SearchNote = () => {
                 description="Always have your Notes at the tip of your finger with Search"
                 name="@lamajribbahs"
                 image="../assets/icons/icon96.ico" />
-            <HeaderDashboard profileUrl = {profileImg}/>
-            <Loading
-                isloading={isLoading}
-                setIsLoading={setIsLoading} />
-            <div className="searchResult">
+            {isLoading ? (
+                <Loading />
+            ) : (
+                <div className="searchResult">
                 {res}
             </div>
+            )}
         </div>
     )
 }

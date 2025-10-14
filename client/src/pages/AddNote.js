@@ -1,8 +1,6 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/AddNote.css'
-import HeaderDashboard from '../components/HeaderDashboard'
-import Footer from '../components/Footer'
 import CustomAlert from '../components/CustomAlert';
 import BASE_URL from '../helper'
 import SEO from '../components/SEO'
@@ -10,17 +8,8 @@ import SEO from '../components/SEO'
 const AddNote = () => {
     const [title, setTitle] = React.useState("");
     const [body, setBody] = React.useState("");
-    const [profileImg,setProfileImg] = React.useState("");
     const [showAlert, setShowAlert] = React.useState(false);
     const navigate = useNavigate();
-
-    React.useEffect(() => {
-        fetch('/api/v1/fetch-profile')
-            .then((response) => response.json())
-            .then((data) => {
-              setProfileImg(data.profileImg);
-            });
-    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -53,7 +42,6 @@ const AddNote = () => {
                 description="Write your thoughts as they come to you, create, update, delete, and search notes effortlessly. A versatile note-taking solution for all your ideas and tasks"
                 name="@lamajribbahs"
                 image="../assets/icons/icon96.ico" />
-            <HeaderDashboard profileUrl = {profileImg}/>
             <div className="addNoteBody">
                 <div className="breadcrumb">
                     <Link to="/dashboard" className="bc-p1">Dashboard</Link>
@@ -75,7 +63,6 @@ const AddNote = () => {
                     />
                 )}
             </div>
-            <Footer clname = {"footer"}/>
         </div>
     )
 }
