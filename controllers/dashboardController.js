@@ -32,8 +32,6 @@ exports.dashboard = async (req, res) => {
         console.log()
         const count = await Note.where({ 'user': new mongoose.Types.ObjectId(req.user.id) }).count();
         res.status(201).send({
-            userName: req.user.firstName,
-            profileImg: req.user.profileImage,
             notes: notes,
             current: page,
             pages: Math.ceil(count / perPage)

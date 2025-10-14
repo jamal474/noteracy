@@ -38,6 +38,7 @@ router.get('/auth/google', passport.authenticate('google', { scope: ['email', 'p
 
 const successLoginUrl = `/dashboard`
 const errorLoginUrl = `/error`
+
 router.get('/google/callback',
     passport.authenticate('google', { 
         failureMessage: "Cannot Login, Please Try Again Later!",
@@ -56,6 +57,7 @@ router.get('/logout', (req,res) => {
         }
         else
         {
+            res.clearCookie('connect.sid');
             res.redirect(`/`);
         }
     })
