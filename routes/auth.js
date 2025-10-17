@@ -36,7 +36,7 @@ passport.use(new GoogleStrategy({
 
 router.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
 
-const successLoginUrl = `/dashboard`
+const successLoginUrl = `${process.env.CLIENT_URL}/dashboard`
 const errorLoginUrl = `/error`
 
 router.get('/google/callback',
@@ -58,7 +58,7 @@ router.get('/logout', (req,res) => {
         else
         {
             res.clearCookie('connect.sid');
-            res.redirect(`/`);
+            res.redirect(`${process.env.CLIENT_URL}`);
         }
     })
 })

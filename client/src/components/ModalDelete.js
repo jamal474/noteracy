@@ -2,7 +2,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/ModalDelete.css'
 import CustomAlert from './CustomAlert';
-import BASE_URL from '../helper';
 
 
 function ModalDelete(props) {
@@ -20,7 +19,7 @@ function ModalDelete(props) {
     const handleNoteDelete = async (e) => {
         e.preventDefault();
         try {
-            await fetch(`${BASE_URL}/api/v1/dashboard/item-delete/${props.id}?_method=DELETE`, {
+            await fetch(`/api/v1/dashboard/item-delete/${props.id}?_method=DELETE`, {
                 method: "POST",
                 credentials: "include"
             })

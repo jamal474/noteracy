@@ -2,7 +2,6 @@ import React from 'react'
 import { Link,} from 'react-router-dom';
 import CustomAlert from './CustomAlert';
 import ModalDelete from './ModalDelete';
-import BASE_URL from '../helper';
 
 const ViewNoteBody = (props) => {
     const [title, setTitle] = React.useState(props.title);
@@ -17,7 +16,7 @@ const ViewNoteBody = (props) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await fetch(`${BASE_URL}/api/v1/dashboard/item/${props.id}?_method=PUT`, {
+            await fetch(`/api/v1/dashboard/item/${props.id}?_method=PUT`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -57,7 +56,7 @@ const ViewNoteBody = (props) => {
                 <h4>View Note</h4>
                 <div className="openDeleteModal" onClick={openModal}>Delete</div>
             </div>
-            <form className="update-form" action={`${BASE_URL}/api/v1/dashboard/item/${props.id}?_method=PUT`} method="POST" onSubmit={handleSubmit}>
+            <form className="update-form" action={`/api/v1/dashboard/item/${props.id}?_method=PUT`} method="POST" onSubmit={handleSubmit}>
                 <input className="up-title" type="text" id="title" name="title" value={title} onChange={(e) => { setTitle(e.target.value)}} placeholder="Title"  required/>
                 <textarea className="ip-body" type="text" id="body" name="body" value={body} onChange={(e) => { setBody(e.target.value)}} placeholder="Take a note..." required/>
                 <button className="up-submit" type="submit" >Update</button>

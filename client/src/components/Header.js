@@ -3,12 +3,12 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext';
-import BASE_URL from '../helper';
 
 const Header = () => {
   const navigate = useNavigate();
   const [query, setQuery] = React.useState("");
   const { user } = useAuth();
+  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
   
   const handleSearch = (e) => {
     navigate(`/dashboard/search/${query}`);
@@ -29,7 +29,7 @@ const Header = () => {
                           <li>
                             <img className = "ProfileImage"  src = {user.profileImage}/>
                             <ul className = "dropdown">
-                                <li><a href= {`${BASE_URL}/logout`} className="logout">Log Out</a></li>
+                                <li><a href={`${apiBaseUrl}/logout`} className="logout">Log Out</a></li>
                             </ul>
                           </li>
                         </ul>
@@ -37,8 +37,8 @@ const Header = () => {
 
                 ) : (
                     <div className="sign-actions">
-                      <a href={`${BASE_URL}/auth/google`} type="button" className="signup">Sign Up</a>
-                      <a href={`${BASE_URL}/auth/google`} type="button" className="signin">Sign In</a>
+                      <a href={`${apiBaseUrl}/auth/google`} type="button" className="signup">Sign Up</a>
+                      <a href={`${apiBaseUrl}/auth/google`} type="button" className="signin">Sign In</a>
                     </div>
                 )}
     </div>

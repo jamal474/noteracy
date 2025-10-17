@@ -14,14 +14,12 @@ export function AuthProvider({ children }) {
         fetch('/api/v1/check-auth-status')
             .then(res => {
                 if (res.ok) {
-                    console.log("returning res");
                     return res.json();
                 }
                 return null; 
             })
             .then(data => {
                 setUser(data);
-                console.log(user);
                 setIsLoading(false);
             })
             .catch(err => {

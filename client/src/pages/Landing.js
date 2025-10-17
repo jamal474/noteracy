@@ -1,9 +1,9 @@
 import React from 'react'
 import '../styles/Landing.css'
-import BASE_URL from '../helper'
 import SEO from '../components/SEO'
 
 const Landing = () => {
+    const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
     return (
         <div className="Landing">
             <SEO
@@ -14,7 +14,7 @@ const Landing = () => {
             <div className="Landing-body">
                 <h1 className = "bd-1">write your thoughts as they come to you</h1>
                 <p className = "bd-2">Noteracy is simple to use</p>
-                <a href={`${BASE_URL}/auth/google`} className = "signin">Try Noteracy, its Free</a>
+                <a href={`${apiBaseUrl}/auth/google`} className = "signin">Try Noteracy, its Free</a>
             </div>
         </div>
     )

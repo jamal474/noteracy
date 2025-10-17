@@ -1,7 +1,6 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import SearchRes from '../components/SearchRes'
-import BASE_URL from '../helper'
 import SEO from '../components/SEO'
 import Loading from '../components/Loading.js'
 import "../styles/SearchNote.css"
@@ -14,7 +13,7 @@ const SearchNote = () => {
     React.useEffect(() => {
         try {
             setIsLoading(true);
-            fetch(`${BASE_URL}/api/v1/dashboard/search/${query}`, {
+            fetch(`/api/v1/dashboard/search/${query}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"

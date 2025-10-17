@@ -2,7 +2,6 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/AddNote.css'
 import CustomAlert from '../components/CustomAlert';
-import BASE_URL from '../helper'
 import SEO from '../components/SEO'
 
 const AddNote = () => {
@@ -14,7 +13,7 @@ const AddNote = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await fetch(`${BASE_URL}/api/v1/dashboard/add`, {
+            await fetch("/api/v1/dashboard/add", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -51,7 +50,7 @@ const AddNote = () => {
                 <div className="add-note-title">
                     <h4>View Note</h4>
                 </div>
-                <form className="add-form" action={`${BASE_URL}/api/v1/dashboard/add`} method="POST" onSubmit={handleSubmit}>
+                <form className="add-form" action={`/api/v1/dashboard/add`} method="POST" onSubmit={handleSubmit}>
                     <input className="add-title" type="text" id="title" name="title" value={title} onChange={(e) => { setTitle(e.target.value); }} placeholder="Title" required/>
                     <textarea className="add-body" type="text" id="body" name="body" value={body} onChange={(e) => { setBody(e.target.value);}} placeholder="Take a note..." required/>
                     <button className="add-submit" type="submit" >+ Add Note</button>

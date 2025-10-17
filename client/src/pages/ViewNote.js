@@ -3,7 +3,6 @@ import '../styles/ViewNote.css'
 import ViewNoteBody from '../components/ViewNoteBody'
 import Loading from '../components/Loading.js'
 import { useParams } from 'react-router-dom';
-import BASE_URL from '../helper'
 import SEO from '../components/SEO'
 
 const ViewNote = () => {
@@ -13,7 +12,7 @@ const ViewNote = () => {
 
     React.useEffect(() => {
         try {
-            fetch(`${BASE_URL}/api/v1/dashboard/item/${nId}`, {
+            fetch(`/api/v1/dashboard/item/${nId}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"

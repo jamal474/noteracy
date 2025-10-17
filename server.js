@@ -30,25 +30,27 @@ app.use(express.json());
 app.use(methodOverride("_method"));
 
 app.use(cors({
-    origin: '',
+    origin: 'http://localhost:3000',
     credentials : true,
 }));
 connectDB()
-
-app.use(express.static(path.join(__dirname, "./client/build")));
 
 app.use('/',require('./routes/auth'));
 app.use('/',require('./routes/dashboard'));
 app.use('/', require('./routes/user'));
 
-app.get("*", function (_, res) {
-    res.sendFile(
-        path.join(__dirname, "./client/build/index.html"),
-        function (err) {
-            res.status(500).send(err);
-        }
-    );
-});
+if(process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, "./client/build")));
+
+    app.get("*", function (_, res) {
+        res.sendFile(
+            path.join(__dirname, "./client/build/index.html"),
+            function (err) {
+                res.status(500).send(err);
+            }
+        );
+    });
+}
 
 app.listen(port, () => {
     console.log(`App listening on port ${port}`);
