@@ -1,0 +1,24 @@
+[cmdk-root] {
+  max-width: 100%;
+  width: 100%;
+}
+[cmdk-input] {
+  font-family: var(--font-sans);
+  border: none;
+  width: 100%;
+  font-size: 1.125rem;
+  padding: 0;
+  outline: none;
+  background: transparent;
+}
+[cmdk-input]::placeholder {
+  color: var(--color-muted);
+}
+[cmdk-item] {
+  content-visibility: auto;
+  cursor: pointer;
+}
+[cmdk-item][aria-selected="true"] {
+  background: var(--color-accent);
+  color: var(--color-accent-fg);
+}

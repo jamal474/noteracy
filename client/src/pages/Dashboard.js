@@ -1,93 +1,42 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import NoteElement from '../components/NoteElement.js'
-import Loading from '../components/Loading.js'
-import '../styles/Dashboard.css'
-import SEO from '../components/SEO'
-import prev from '../assets/icons/prev.svg'
-import next from '../assets/icons/next.svg'
-import { useAuth } from '../context/AuthContext.js'
+import React from 'react';
+import SEO from '../components/SEO';
+import { useAuth } from '../context/AuthContext';
+import { StickyNote, Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
-    const {user} = useAuth();
-    const [currNote, setCurrNote] = React.useState([]);
-    const [page, setPage] = React.useState(1);
-    const [totalPage, setTotalPage] = React.useState(0);
-    const [pageOff, setPageOff] = React.useState(false);
-    const [isLoading, setIsLoading] = React.useState(true);
+  const { user } = useAuth();
 
-    React.useEffect(() => {
-        try {
-            setIsLoading(true);
-            fetch(`/api/v1/dashboard?page=${page}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                credentials: "include"
-            })
-                .then(res => res.json())
-                .then(data => {
-                    
-                    if (data.notes.length > 0) {
-                        const noteElements = data.notes.map((note) => (
-                            <NoteElement
-                                key={note._id}
-                                id={note._id}
-                                title={note.title}
-                                body={note.body}
-                            />
-                        ));
-                        setCurrNote(noteElements);
-                        setTotalPage(data.pages);
-                    }
-                    else {
-                        setPageOff(true);
-                        setCurrNote(
-                            <div className="Dboard-new-notes">
-                                <h2 className="Dboard-new-msg"> let's start with you first Note</h2>
-                                <Link to="/dashboard/addNote" className="newNotebtn">Create One!</Link>
-                            </div>
-                        )
-                    }
-                });
-                setIsLoading(false);
-        }
-        catch (error) {
-            console.log(`${error}`);
-        }
-    }, [page])
+  return (
+    <div className="flex flex-col items-center justify-center h-full text-center space-y-6">
+      <SEO
+        title="Dashboard — Noteracy"
+        description="Noteracy: Your connected workspace for managing notes."
+        name="@lamajribbahs"
+      />
 
+      <div className="flex items-center justify-center w-20 h-20 rounded-full bg-[var(--color-surface-raised)]">
+        <StickyNote size={32} className="text-[var(--color-accent)]" />
+      </div>
+      
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold">
+          Welcome back, {user?.displayName?.split(' ')[0] || 'there'}!
+        </h1>
+        <p className="text-[var(--color-muted)] max-w-md mx-auto">
+          Select a note from the sidebar to start writing, or create a new one.
+        </p>
+      </div>
 
-    return (
-        <div className="Dashboard">
-            <SEO
-                title=" Dashboard - Noteracy"
-                description="Noteracy: Your connected workspace for taking, managing, and organizing notes. Write your thoughts as they come to you, create, update, delete, and search notes effortlessly. A versatile note-taking solution for all your ideas and tasks"
-                name="@lamajribbahs"
-                image="../assets/icons/icon96.ico" />
-            {
-                isLoading ? (<Loading/>): (
-                    <div className="Dashboard-body">
-                        <div className="Dboard-intro">
-                            <h1 className="Heyuser">Hey, {user.displayName}</h1>
-                            <Link to="/dashboard/addNote" className="newNotebtn">+ New Note</Link>
-                        </div>
-                        <div className="Dboard-notes">
-                            {currNote}
-                        </div>
-                        <div className={pageOff ? "pagination-off pagination" : "pagination"}>
-                            <img className={page === 1 ? "pagination-btn btn-disabled" : "pagination-btn"} disabled={page === 1} onClick={() => { setPage(page - 1) }} src={prev} />
-                            <div className="pagination-number">1</div>
-                            <div className="pagination-number-curr">{page}</div>
-                            <div className="pagination-number">{totalPage}</div>
-                            <img className={page === totalPage ? "pagination-btn btn-disabled" : "pagination-btn"} disabled={page === totalPage} onClick={() => { setPage(page + 1) }} src={next} />
-                        </div>
-                    </div>
-                )
-            }
-        </div>
-    )
-}
+      <Link
+        to="/dashboard/addNote"
+        className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium bg-[var(--color-accent)] text-[var(--color-accent-fg)] rounded-[var(--radius)] hover:opacity-90 transition-opacity"
+      >
+        <Plus size={18} />
+        Create a Note
+      </Link>
+    </div>
+  );
+};
 
-export default Dashboard
+export default Dashboard;

@@ -1,55 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --bg-color : #FFC700;
-  --p-rgb : white;
-}
+@import './styles/tokens.css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+@import '@fontsource/jetbrains-mono/400.css';
 
-body {
-  font-family : 'Poppins', sans-serif;
-  background-color: black;
-  color : var(--p-rgb);
-  font-weight: 300;
-  font-size: 1.2rem;
-  background-image: url(./assets/images/noise-bg.png);
-  background-image: linear-gradient(45deg, black, black, #1d3557);
-  background-repeat: no-repeat;
-  overflow-x: hidden;
-}
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-body::-webkit-scrollbar {
-  display: none;
-  width: 0.5em;
-}
- 
-body::-webkit-scrollbar-track {
-  box-shadow: inset 2px 2px 0px rgba(0, 0, 0, 0.3);
-}
-body::-webkit-scrollbar-thumb {
-  background-color: #FFC700;
-  border-radius : 5px;
-}
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--color-fg);
+    background-color: var(--color-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-h1,h2,h3,h4,h5,h6 {
-  font-family : 'unbounded', cursive;
-  font-weight: 800;
-}
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-accent-fg);
+  }
 
-a,
-form,
-input,
-button {
-    text-decoration: inherit;
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-muted);
+  }
+
+  a {
     color: inherit;
+    text-decoration: none;
+  }
 }
-
-.app-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.main-content {
-  flex: 1;
-}
-
-

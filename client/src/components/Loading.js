@@ -1,15 +1,12 @@
-import React from 'react'
-import load from '../assets/images/noteracyLoad.gif'
-import "../styles/Loading.css"
+import { Loader2 } from 'lucide-react';
+
 const Loading = () => {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
+      <Loader2 className="w-8 h-8 text-[var(--color-accent)] animate-spin" />
+      <p className="text-sm text-[var(--color-muted)]">Loading…</p>
+    </div>
+  );
+};
 
-    return (
-        <div className="loadingScreen">
-            <div id="animation-container">
-                <img src = {load}/>
-            </div>
-        </div>
-    )
-}
-
-export default Loading
+export default Loading;

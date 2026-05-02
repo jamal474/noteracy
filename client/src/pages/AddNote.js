@@ -1,69 +1,101 @@
-import React from 'react'
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import '../styles/AddNote.css'
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import CustomAlert from '../components/CustomAlert';
-import SEO from '../components/SEO'
+import SEO from '../components/SEO';
+import { ChevronRight } from 'lucide-react';
+
+const noteSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(100, 'Title too long'),
+  body: z.string().min(1, 'Body is required'),
+});
 
 const AddNote = () => {
-    const [title, setTitle] = React.useState("");
-    const [body, setBody] = React.useState("");
-    const [showAlert, setShowAlert] = React.useState(false);
-    const navigate = useNavigate();
+  const [showAlert, setShowAlert] = React.useState(false);
+  const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await fetch("/api/v1/dashboard/add", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    title: title,
-                    body: body
-                }),
-                credentials: "include"
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    setShowAlert(true);
-                    setTimeout(() => navigate(`/dashboard`), 1000);
-                });
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+    resolver: zodResolver(noteSchema),
+    defaultValues: { title: '', body: '' },
+  });
 
-        } catch (err) {
-            console.log(err);
-        }
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch('/api/v1/dashboard/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      if (response.ok) {
+        setShowAlert(true);
+        setTimeout(() => navigate('/dashboard'), 1000);
+      } else {
+        console.error('Failed to add note');
+      }
+    } catch (err) {
+      console.error(err);
     }
-    return (
-        <div className="addNote">
-            <SEO
-                title="Add Note - Noteracy"
-                description="Write your thoughts as they come to you, create, update, delete, and search notes effortlessly. A versatile note-taking solution for all your ideas and tasks"
-                name="@lamajribbahs"
-                image="../assets/icons/icon96.ico" />
-            <div className="addNoteBody">
-                <div className="breadcrumb">
-                    <Link to="/dashboard" className="bc-p1">Dashboard</Link>
-                    <div className="bc-sep">/</div>
-                    <div className="bc-p2">Add Note</div>
-                </div>
-                <div className="add-note-title">
-                    <h4>View Note</h4>
-                </div>
-                <form className="add-form" action={`/api/v1/dashboard/add`} method="POST" onSubmit={handleSubmit}>
-                    <input className="add-title" type="text" id="title" name="title" value={title} onChange={(e) => { setTitle(e.target.value); }} placeholder="Title" required/>
-                    <textarea className="add-body" type="text" id="body" name="body" value={body} onChange={(e) => { setBody(e.target.value);}} placeholder="Take a note..." required/>
-                    <button className="add-submit" type="submit" >+ Add Note</button>
-                </form>
-                {showAlert && (
-                    <CustomAlert
-                        message="Note Added"
-                        onClose={() => setShowAlert(false)}
-                    />
-                )}
-            </div>
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto">
+      <SEO
+        title="Add Note — Noteracy"
+        description="Create a new note in your workspace."
+        name="@lamajribbahs"
+      />
+
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-1 text-sm text-[var(--color-muted)] mb-6">
+        <Link to="/dashboard" className="hover:text-[var(--color-accent)] transition-colors">
+          Dashboard
+        </Link>
+        <ChevronRight size={14} />
+        <span className="text-[var(--color-fg)]">New note</span>
+      </nav>
+
+      <h2 className="text-xl font-semibold mb-6">Create a new note</h2>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <input
+            type="text"
+            {...register('title')}
+            placeholder="Note title"
+            className="w-full text-2xl font-medium bg-transparent border-none outline-none placeholder:text-[var(--color-muted)] py-2"
+          />
+          {errors.title && (
+            <p className="text-xs text-[var(--color-destructive)] mt-1">{errors.title.message}</p>
+          )}
         </div>
-    )
-}
+        <div>
+          <textarea
+            {...register('body')}
+            placeholder="Start writing…"
+            rows={16}
+            className="w-full text-base leading-relaxed bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius)] p-4 outline-none resize-y placeholder:text-[var(--color-muted)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20 transition-all"
+          />
+          {errors.body && (
+            <p className="text-xs text-[var(--color-destructive)] mt-1">{errors.body.message}</p>
+          )}
+        </div>
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="px-4 py-2 text-sm font-medium bg-[var(--color-accent)] text-[var(--color-accent-fg)] rounded-[var(--radius)] hover:opacity-90 transition-opacity disabled:opacity-50"
+          >
+            {isSubmitting ? 'Creating…' : 'Create note'}
+          </button>
+        </div>
+      </form>
+
+      {showAlert && <CustomAlert message="Note created" onClose={() => setShowAlert(false)} />}
+    </div>
+  );
+};
 
 export default AddNote;

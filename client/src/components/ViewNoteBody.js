@@ -1,79 +1,92 @@
-import React from 'react'
-import { Link,} from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import CustomAlert from './CustomAlert';
-import ModalDelete from './ModalDelete';
+import { ChevronRight } from 'lucide-react';
 
-const ViewNoteBody = (props) => {
-    const [title, setTitle] = React.useState(props.title);
-    const [body, setBody] = React.useState(props.body);
-    const [showAlert, setShowAlert] = React.useState(false);
-    let dotdotdot = "";
-    if(props.title.length > 40)
-    {
-        dotdotdot = ". . ."
+const noteSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(100, 'Title too long'),
+  body: z.string().min(1, 'Body is required'),
+});
+
+const ViewNoteBody = ({ id, title, body }) => {
+  const [showAlert, setShowAlert] = React.useState(false);
+
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+    resolver: zodResolver(noteSchema),
+    defaultValues: { title, body },
+  });
+
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch(`/api/v1/dashboard/item/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      if (response.ok) setShowAlert(true);
+    } catch (err) {
+      console.error(err);
     }
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await fetch(`/api/v1/dashboard/item/${props.id}?_method=PUT`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    title: title,
-                    body: body
-                }),
-                credentials: "include"
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    setShowAlert(true);
-                });
+  return (
+    <div className="max-w-3xl mx-auto">
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-1 text-sm text-[var(--color-muted)] mb-6">
+        <Link to="/dashboard" className="hover:text-[var(--color-accent)] transition-colors">
+          Dashboard
+        </Link>
+        <ChevronRight size={14} />
+        <span className="text-[var(--color-fg)] truncate max-w-[200px]">{title}</span>
+      </nav>
 
-        } catch (err) {
-            console.log(err);
-        }
-    }
+      {/* Title bar */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold">Edit note</h2>
+      </div>
 
-    const [showModal, setShowModal] = React.useState(false);
-    const openModal = () => {
-        setShowModal(true);
-    };
-    const closeModal = () => {
-        setShowModal(false);
-    };
-
-    return (
-        <div className="viewNoteBody">
-            <div className="breadcrumb">
-                <Link to="/dashboard" className="bc-d">Dashboard</Link>
-                <div className="bc-sep">/</div>
-                <div className="bc-p2">{props.title.substring(0, 40)} {dotdotdot}</div>
-            </div>
-            <div className="view-delete">
-                <h4>View Note</h4>
-                <div className="openDeleteModal" onClick={openModal}>Delete</div>
-            </div>
-            <form className="update-form" action={`/api/v1/dashboard/item/${props.id}?_method=PUT`} method="POST" onSubmit={handleSubmit}>
-                <input className="up-title" type="text" id="title" name="title" value={title} onChange={(e) => { setTitle(e.target.value)}} placeholder="Title"  required/>
-                <textarea className="ip-body" type="text" id="body" name="body" value={body} onChange={(e) => { setBody(e.target.value)}} placeholder="Take a note..." required/>
-                <button className="up-submit" type="submit" >Update</button>
-            </form>
-            <ModalDelete
-                title = {props.title} 
-                id = {props.id} 
-                show = {showModal} 
-                onClose = {closeModal} />
-            {showAlert && (
-                <CustomAlert
-                    message="Note updated"
-                    onClose={() => setShowAlert(false)}
-                />
-            )}
+      {/* Editor form */}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <input
+            type="text"
+            {...register('title')}
+            placeholder="Note title"
+            className="w-full text-2xl font-medium bg-transparent border-none outline-none placeholder:text-[var(--color-muted)] py-2"
+          />
+          {errors.title && (
+            <p className="text-xs text-[var(--color-destructive)] mt-1">{errors.title.message}</p>
+          )}
         </div>
-    )
-}
+        <div>
+          <textarea
+            {...register('body')}
+            placeholder="Start writing…"
+            rows={16}
+            className="w-full text-base leading-relaxed bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius)] p-4 outline-none resize-y placeholder:text-[var(--color-muted)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20 transition-all"
+          />
+          {errors.body && (
+            <p className="text-xs text-[var(--color-destructive)] mt-1">{errors.body.message}</p>
+          )}
+        </div>
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="px-4 py-2 text-sm font-medium bg-[var(--color-accent)] text-[var(--color-accent-fg)] rounded-[var(--radius)] hover:opacity-90 transition-opacity disabled:opacity-50"
+          >
+            {isSubmitting ? 'Saving…' : 'Save changes'}
+          </button>
+        </div>
+      </form>
 
-export default ViewNoteBody
+      {showAlert && <CustomAlert message="Note updated" onClose={() => setShowAlert(false)} />}
+    </div>
+  );
+};
+
+export default ViewNoteBody;

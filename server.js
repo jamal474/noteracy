@@ -12,7 +12,7 @@ const port = process.env.PORT;
 const path = require('path')
 
 app.use(session({
-    secret: 'mr cat in the box',
+    secret: process.env.SESSION_SECRET || 'mr cat in the box',
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
@@ -35,9 +35,33 @@ app.use(cors({
 }));
 connectDB()
 
+const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use(limiter);
+app.use(morgan('dev'));
+
 app.use('/',require('./routes/auth'));
 app.use('/',require('./routes/dashboard'));
 app.use('/', require('./routes/user'));
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(err.status || 500).json({
+        error: {
+            message: err.message || 'Internal Server Error',
+        }
+    });
+});
 
 if(process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, "./client/build")));

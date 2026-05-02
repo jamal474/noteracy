@@ -29,7 +29,11 @@ The website is hosted on **cyclic.sh**
 
 ---
 
-## Design:
+## Design & Architecture:
+
+**Design System & Styling:**
+- All design tokens (colors, fonts, spacing, border-radius) are centrally managed in `client/src/styles/tokens.css`. To extend or modify the app's aesthetic, edit this single file.
+- **Radix UI Primitive Integration:** We use Radix UI (`@radix-ui/react-dropdown-menu`, `@radix-ui/react-alert-dialog`, `@radix-ui/react-toast`) for robust, accessible, and unstyled base components to ensure keyboard navigation, ARIA compliance, and high quality interactivity without sacrificing custom CSS designs.
 
 ## Database:
 
@@ -46,12 +50,13 @@ The website is hosted on **cyclic.sh**
   - **user :** to confirm authentication status of user anytime.
 
 ## Client-Side :
-Front-end was made using **React.js** with **react-router** for routing and **react-helmet** for custom head. 
+Front-end was made using **React.js** with **react-router** for routing and **react-hook-form** + **zod** for reliable state management and validation.
 
 ---
 ## Install 
 ```sh
 npm install
+cd client && npm install
 ```
 
 
@@ -59,19 +64,26 @@ npm install
 
 ### Build the React frontend
 ```sh
-cd client | npm run build
+cd client && npm run build
 ```
 
 ### Create a .env file
+Copy the provided `.env.example` file in the root directory to `.env` and fill in your details:
 ```sh
-MONGODB_URI = ''
-GOOGLE_CLIENT_ID = ''
-GOOGLE_CLIENT_SECRET = ''
-GOOGLE_CALLBACK_URL = 'http://localhost:5000/google/callback'
+cp .env.example .env
+```
+
+Ensure the following variables are set:
+```sh
+PORT=3175
+MONGODB_URI=mongodb://localhost:27017/noteracy
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:3175/google/callback
+CLIENT_URL=http://localhost:3000
+SESSION_SECRET=your_secure_session_secret
 ```
 Fill in these details from your MongoDB Atlas connection and Google OAuth credentials.
-
-Set `http://localhost:5000/google/callback` in redirect URI in google credential.
 ### Run the server
 ```sh
 npm run dev

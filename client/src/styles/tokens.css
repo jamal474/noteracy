@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ──── Dark Theme with Yellow Accent (default) ──── */
+:root {
+  --color-accent: #FACC15;
+  --color-accent-fg: #0f172a;
+  --color-surface: #1e293b;
+  --color-surface-raised: #334155;
+  --color-muted: #94a3b8;
+  --color-border: #334155;
+  --color-bg: #0f172a;
+  --color-fg: #f1f5f9;
+  --color-fg-muted: #94a3b8;
+  --color-destructive: #ef4444;
+  --color-success: #22c55e;
+  --radius: 8px;
+}
