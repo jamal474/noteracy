@@ -57,9 +57,28 @@ const Sidebar = ({ onOpenSearch }) => {
 
   const loadMore = () => setPage(p => p + 1);
 
-  // Determine Mac vs Windows shortcut
   const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
   const shortcutText = isMac ? '⌘K' : 'Ctrl K';
+
+  const handleCreateNote = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/v1/dashboard/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ title: 'Untitled Note', body: '<p></p>' }),
+      });
+      if (response.ok) {
+        const newNote = await response.json();
+        // Insert at the top of the list and navigate
+        setNotes([newNote, ...notes]);
+        navigate(`/dashboard/viewNote/${newNote._id}`);
+      }
+    } catch (err) {
+      console.error('Failed to create note:', err);
+    }
+  };
 
   const handleRenameSubmit = async (e, id, originalBody) => {
     e.preventDefault();
@@ -81,7 +100,7 @@ const Sidebar = ({ onOpenSearch }) => {
   };
 
   return (
-    <aside className="w-72 h-full flex flex-col bg-[var(--color-bg)] border-r border-[var(--color-border)]">
+    <aside className="w-72 h-full flex flex-col bg-[var(--color-bg)] border-r border-[var(--color-border)] relative">
       {/* User Profile Dropdown */}
       <div className="p-4 border-b border-[var(--color-border)]">
         <DropdownMenu.Root>
@@ -243,13 +262,13 @@ const Sidebar = ({ onOpenSearch }) => {
 
       {/* Add Note Button pinned to bottom */}
       <div className="absolute bottom-0 w-72 p-4 bg-[var(--color-bg)] border-t border-[var(--color-border)]">
-        <Link
-          to="/dashboard/addNote"
+        <button
+          onClick={handleCreateNote}
           className="flex items-center justify-center gap-2 w-full py-2 text-sm font-medium bg-[var(--color-accent)] text-[var(--color-accent-fg)] rounded-[var(--radius)] hover:opacity-90 transition-opacity shadow-lg"
         >
           <Plus size={16} />
           New Note
-        </Link>
+        </button>
       </div>
 
       {/* Delete Modal rendered at Sidebar level to avoid z-index issues */}

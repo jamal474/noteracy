@@ -13,8 +13,7 @@ exports.dashboard = async (req, res, next) => {
     try {
         const notes = await Note.aggregate([
             { $sort: { createdAt: -1 } },
-            { $match: { user: new mongoose.Types.ObjectId(req.user.id) } },
-            { $project: { title: { $substr: ['$title', 0, 30] }, body: { $substr: ['$body', 0, 100] } } }
+            { $match: { user: new mongoose.Types.ObjectId(req.user.id) } }
         ]).skip(perPage * page - perPage).limit(perPage).exec();
 
         const count = await Note.countDocuments({ 'user': new mongoose.Types.ObjectId(req.user.id) });

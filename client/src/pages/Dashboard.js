@@ -1,11 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import SEO from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
 import { StickyNote, Plus } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const [isCreating, setIsCreating] = useState(false);
+
+  const handleCreateNote = async (e) => {
+    e.preventDefault();
+    setIsCreating(true);
+    try {
+      const response = await fetch('/api/v1/dashboard/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ title: 'Untitled Note', body: '<p></p>' }),
+      });
+      if (response.ok) {
+        const newNote = await response.json();
+        navigate(`/dashboard/viewNote/${newNote._id}`);
+      }
+    } catch (err) {
+      console.error('Failed to create note:', err);
+    } finally {
+      setIsCreating(false);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center h-full text-center space-y-6">
@@ -28,13 +51,14 @@ const Dashboard = () => {
         </p>
       </div>
 
-      <Link
-        to="/dashboard/addNote"
-        className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium bg-[var(--color-accent)] text-[var(--color-accent-fg)] rounded-[var(--radius)] hover:opacity-90 transition-opacity"
+      <button
+        onClick={handleCreateNote}
+        disabled={isCreating}
+        className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium bg-[var(--color-accent)] text-[var(--color-accent-fg)] rounded-[var(--radius)] hover:opacity-90 transition-opacity disabled:opacity-50"
       >
         <Plus size={18} />
-        Create a Note
-      </Link>
+        {isCreating ? 'Creating...' : 'Create a Note'}
+      </button>
     </div>
   );
 };

@@ -17,6 +17,16 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@tiptap/extension-code-block": "^3.22.5",
+    "@tiptap/extension-color": "^3.22.5",
+    "@tiptap/extension-link": "^3.22.5",
+    "@tiptap/extension-placeholder": "^3.22.5",
+    "@tiptap/extension-task-item": "^3.22.5",
+    "@tiptap/extension-task-list": "^3.22.5",
+    "@tiptap/extension-text-style": "^3.22.5",
+    "@tiptap/extension-underline": "^3.22.5",
+    "@tiptap/react": "^3.22.5",
+    "@tiptap/starter-kit": "^3.22.5",
     "autoprefixer": "^10.5.0",
     "axios": "^1.5.1",
     "class-variance-authority": "^0.7.1",
@@ -34,6 +44,7 @@
     "react-scripts": "5.0.1",
     "sheryjs": "^1.0.0-beta.0.0.8",
     "tailwindcss": "^3.4.19",
+    "tiptap-extension-global-drag-handle": "^0.1.18",
     "web-vitals": "^2.1.4",
     "zod": "^4.4.2"
   },
@@ -61,5 +72,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.19"
   }
 }
