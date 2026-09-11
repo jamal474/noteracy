@@ -289,33 +289,41 @@ render_vhost http
 ok "vhost → $VHOST_FILE"
 
 # ── 5a. Clear the way for our default_server ──────────────────────────────────
-# The distro's placeholder vhost claims default_server on :80; nginx refuses
-# to start once ours claims it too.
+# The distro's placeholder claims default_server on :80 and collides with ours.
+# nginx includes sites-enabled/* unfiltered, so backups must go outside it.
+BACKUP_DIR=/etc/nginx/noteracy-disabled
+install -d -m 755 "$BACKUP_DIR"
+
 DISABLED=0
 for f in /etc/nginx/sites-enabled/default /etc/nginx/conf.d/default.conf; do
   [ -e "$f" ] || continue
-  mv "$f" "$f.disabled-by-noteracy"
+  mv "$f" "$BACKUP_DIR/$(basename "$f")"
   DISABLED=1
 done
 
-# Any *other* vhost still claiming default_server would collide. Strip the
-# keyword rather than disabling someone's site, and keep a backup.
+# Any other vhost claiming default_server collides with ours. Strip the keyword
+# rather than disabling someone's site.
 for other in /etc/nginx/sites-enabled/* /etc/nginx/conf.d/*.conf; do
-  [ -f "$other" ] || continue
-  case "$other" in
-    "$VHOST_FILE"|"$VHOST_LINK"|*/noteracy-http.conf|*/noteracy-realip.conf) continue ;;
+  [ -e "$other" ] || continue
+  name="$(basename "$other")"
+  case "$name" in
+    "$(basename "$VHOST_FILE")"|noteracy-http.conf|noteracy-realip.conf) continue ;;
+    *.bak|*.bak-*|*.disabled-by-*) continue ;;
   esac
-  if grep -q "default_server" "$other" 2>/dev/null; then
-    cp -n "$other" "$other.bak-noteracy" 2>/dev/null || true
-    sed -i 's/[[:space:]]*default_server//g' "$other"
-    note "removed default_server from $(basename "$other") (backup kept)"
+  # Resolve the symlink: sed -i on a link replaces the link with a real file.
+  target="$(readlink -f "$other")"
+  [ -f "$target" ] || continue
+  if grep -q "default_server" "$target" 2>/dev/null; then
+    cp -n "$target" "$BACKUP_DIR/$name.bak" 2>/dev/null || true
+    sed -i 's/[[:space:]]*default_server//g' "$target"
+    note "removed default_server from $name (backup in $BACKUP_DIR)"
     DISABLED=1
   fi
 done
 
 # RHEL-family images keep the default server block inside nginx.conf itself.
 if grep -qE '^[[:space:]]*server[[:space:]]*\{' /etc/nginx/nginx.conf; then
-  cp -n /etc/nginx/nginx.conf /etc/nginx/nginx.conf.noteracy.bak || true
+  cp -n /etc/nginx/nginx.conf "$BACKUP_DIR/nginx.conf.bak" || true
   awk '
     BEGIN { depth = 0; inblock = 0 }
     {
@@ -333,7 +341,7 @@ if grep -qE '^[[:space:]]*server[[:space:]]*\{' /etc/nginx/nginx.conf; then
   ' /etc/nginx/nginx.conf > /etc/nginx/nginx.conf.new
   mv /etc/nginx/nginx.conf.new /etc/nginx/nginx.conf
   note "commented out the default server block in /etc/nginx/nginx.conf"
-  note "original kept at /etc/nginx/nginx.conf.noteracy.bak"
+  note "original kept at $BACKUP_DIR/nginx.conf.bak"
   DISABLED=1
 fi
 [ "$DISABLED" -eq 1 ] && ok 'default "Welcome to nginx" site disabled' || ok "no default site in the way"
