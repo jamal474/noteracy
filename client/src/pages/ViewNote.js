@@ -3,6 +3,7 @@ import ViewNoteBody from '../components/ViewNoteBody';
 import Loading from '../components/Loading';
 import { useParams } from 'react-router-dom';
 import SEO from '../components/SEO';
+import { apiUrl } from '../helper';
 
 const ViewNote = () => {
   const { nId } = useParams();
@@ -13,7 +14,7 @@ const ViewNote = () => {
     let cancelled = false;
     const fetchNote = async () => {
       try {
-        const res = await fetch(`/api/v1/dashboard/item/${nId}`, {
+        const res = await fetch(apiUrl(`/api/v1/dashboard/item/${nId}`), {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',

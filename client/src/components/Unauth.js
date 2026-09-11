@@ -1,8 +1,8 @@
 import React from 'react';
 import { ShieldAlert } from 'lucide-react';
+import { apiUrl } from '../helper';
 
 const Unauth = () => {
-  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || '';
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] gap-4 text-center">
@@ -14,7 +14,7 @@ const Unauth = () => {
         You need to be signed in to view this page.
       </p>
       <a
-        href={`${apiBaseUrl}/auth/google`}
+        href={apiUrl('/auth/google')}
         className="px-4 py-2 text-sm font-medium bg-[var(--color-accent)] text-[var(--color-accent-fg)] rounded-[var(--radius)] hover:opacity-90 transition-opacity"
       >
         Sign in with Google

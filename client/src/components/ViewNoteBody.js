@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import RichTextEditor from './RichTextEditor';
 import '../styles/tiptap.css';
 import { Loader2, Check } from 'lucide-react';
+import { apiUrl } from '../helper';
 
 const ViewNoteBody = ({ id, title: initialTitle, body: initialBody }) => {
   const [title, setTitle] = useState(initialTitle || '');
@@ -29,7 +30,7 @@ const ViewNoteBody = ({ id, title: initialTitle, body: initialBody }) => {
 
     const timer = setTimeout(async () => {
       try {
-        const response = await fetch(`/api/v1/dashboard/item/${id}`, {
+        const response = await fetch(apiUrl(`/api/v1/dashboard/item/${id}`), {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',

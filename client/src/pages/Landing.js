@@ -4,10 +4,10 @@ import { ArrowRight, StickyNote, Zap, Lock } from 'lucide-react';
 
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
+import { apiUrl } from '../helper';
 
 const Landing = () => {
   const { user } = useAuth();
-  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || '';
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] text-center px-4">
@@ -37,7 +37,7 @@ const Landing = () => {
           </Link>
         ) : (
           <a
-            href={`${apiBaseUrl}/auth/google`}
+            href={apiUrl('/auth/google')}
             className="inline-flex items-center gap-2 px-6 py-3 text-base font-semibold bg-[var(--color-accent)] text-[var(--color-accent-fg)] rounded-[var(--radius)] hover:opacity-90 transition-opacity group"
           >
             Get started free

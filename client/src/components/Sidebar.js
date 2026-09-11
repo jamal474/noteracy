@@ -5,11 +5,11 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Search, LogOut, Plus, FileText, LayoutDashboard, MoreHorizontal, Trash2, Edit2, Check, X } from 'lucide-react';
 import Loading from './Loading';
 import ModalDelete from './ModalDelete';
+import { apiUrl } from '../helper';
 
 const Sidebar = ({ onOpenSearch }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || '';
 
   const [notes, setNotes] = useState([]);
   const [page, setPage] = useState(1);
@@ -29,7 +29,7 @@ const Sidebar = ({ onOpenSearch }) => {
       if (pageNum === 1) setIsLoading(true);
       else setIsLoadingMore(true);
 
-      const res = await fetch(`/api/v1/dashboard?page=${pageNum}`, {
+      const res = await fetch(apiUrl(`/api/v1/dashboard?page=${pageNum}`), {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -63,7 +63,7 @@ const Sidebar = ({ onOpenSearch }) => {
   const handleCreateNote = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/v1/dashboard/add', {
+      const response = await fetch(apiUrl('/api/v1/dashboard/add'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -84,7 +84,7 @@ const Sidebar = ({ onOpenSearch }) => {
     e.preventDefault();
     if (!editTitle.trim()) return setEditingId(null);
     try {
-      const response = await fetch(`/api/v1/dashboard/item/${id}`, {
+      const response = await fetch(apiUrl(`/api/v1/dashboard/item/${id}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: editTitle, body: originalBody }), // backend requires body
@@ -130,7 +130,7 @@ const Sidebar = ({ onOpenSearch }) => {
               <DropdownMenu.Separator className="h-px bg-[var(--color-border)] my-1" />
               <DropdownMenu.Item asChild>
                 <a
-                  href={`${apiBaseUrl}/logout`}
+                  href={apiUrl('/logout')}
                   className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-inner outline-none cursor-pointer transition-colors text-[var(--color-destructive)] hover:bg-[var(--color-surface-raised)] focus:bg-[var(--color-surface-raised)]"
                 >
                   <LogOut size={16} />

@@ -4,6 +4,7 @@ import SearchRes from '../components/SearchRes';
 import SEO from '../components/SEO';
 import Loading from '../components/Loading';
 import { SearchX, ChevronRight } from 'lucide-react';
+import { apiUrl } from '../helper';
 
 const SearchNote = () => {
   const { query } = useParams();
@@ -14,7 +15,7 @@ const SearchNote = () => {
   const fetchResults = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`/api/v1/dashboard/search/${query}`, {
+      const response = await fetch(apiUrl(`/api/v1/dashboard/search/${query}`), {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

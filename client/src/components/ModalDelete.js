@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import CustomAlert from './CustomAlert';
 import { Trash2 } from 'lucide-react';
+import { apiUrl } from '../helper';
 
 function ModalDelete({ title, id, show, onClose }) {
   const [showAlert, setShowAlert] = React.useState(false);
@@ -13,7 +14,7 @@ function ModalDelete({ title, id, show, onClose }) {
   const handleNoteDelete = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`/api/v1/dashboard/item-delete/${id}`, {
+      const response = await fetch(apiUrl(`/api/v1/dashboard/item-delete/${id}`), {
         method: 'DELETE',
         credentials: 'include',
       });

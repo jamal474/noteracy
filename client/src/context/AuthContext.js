@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
+import { apiUrl } from '../helper';
 
 const AuthContext = createContext();
 
@@ -11,7 +12,7 @@ export function AuthProvider({ children }) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/api/v1/check-auth-status')
+        fetch(apiUrl('/api/v1/check-auth-status'))
             .then(res => {
                 if (res.ok) {
                     return res.json();

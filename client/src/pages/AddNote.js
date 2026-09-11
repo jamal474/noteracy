@@ -6,6 +6,7 @@ import * as z from 'zod';
 import CustomAlert from '../components/CustomAlert';
 import SEO from '../components/SEO';
 import { ChevronRight } from 'lucide-react';
+import { apiUrl } from '../helper';
 
 const noteSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100, 'Title too long'),
@@ -23,7 +24,7 @@ const AddNote = () => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await fetch('/api/v1/dashboard/add', {
+      const response = await fetch(apiUrl('/api/v1/dashboard/add'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),

@@ -3,6 +3,7 @@ import SEO from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
 import { StickyNote, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { apiUrl } from '../helper';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -13,7 +14,7 @@ const Dashboard = () => {
     e.preventDefault();
     setIsCreating(true);
     try {
-      const response = await fetch('/api/v1/dashboard/add', {
+      const response = await fetch(apiUrl('/api/v1/dashboard/add'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/User');
+const { BASE_PATH } = require('../config/basePath');
 
 
 passport.use(new GoogleStrategy({
@@ -36,7 +37,11 @@ passport.use(new GoogleStrategy({
 
 router.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
 
-const clientUrl = process.env.CLIENT_URL || '';
+// Where to send the browser once Google is done with it. In production this
+// is the absolute short-domain URL (https://<short-domain>/notes); falling
+// back to BASE_PATH keeps the redirects working as same-origin paths when
+// CLIENT_URL isn't set, instead of bouncing to the domain root.
+const clientUrl = (process.env.CLIENT_URL || BASE_PATH).replace(/\/+$/, '');
 const successLoginUrl = `${clientUrl}/dashboard`;
 const errorLoginUrl = `${clientUrl}/error`;
 
@@ -59,7 +64,7 @@ router.get('/logout', (req,res) => {
         else
         {
             res.clearCookie('connect.sid');
-            res.redirect(clientUrl || '/');
+            res.redirect(clientUrl);
         }
     })
 })

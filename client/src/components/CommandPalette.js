@@ -3,6 +3,7 @@ import { Command } from 'cmdk';
 import { useNavigate } from 'react-router-dom';
 import { Search, FileText, Loader2 } from 'lucide-react';
 import '../styles/cmdk.css';
+import { apiUrl } from '../helper';
 
 const CommandPalette = ({ open, setOpen }) => {
   const [search, setSearch] = useState('');
@@ -33,7 +34,7 @@ const CommandPalette = ({ open, setOpen }) => {
     const fetchSearchResults = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/v1/dashboard/search/${encodeURIComponent(search)}`, {
+        const response = await fetch(apiUrl(`/api/v1/dashboard/search/${encodeURIComponent(search)}`), {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
