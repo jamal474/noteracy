@@ -138,8 +138,17 @@ if [ "$HEALTHY" -eq 1 ]; then
 fi
 
 # ── 6. Rollback ───────────────────────────────────────────────────────────────
-# Often the database rather than the code, but roll back either way.
 warn "no healthy response after 60s (last: $LAST_CODE $(printf '%.80s' "$LAST_BODY"))"
+
+# A 503 is the health endpoint answering: the app runs, the database does not.
+# Rolling back code cannot fix that, and would strand the box on old code.
+if [ "$LAST_CODE" = "503" ]; then
+  die "Not rolling back — the app is running and answering, so this is the
+    environment, not the commit. Almost always MONGODB_URI or this VM's IP
+    missing from the MongoDB Atlas access list.
+    Status: $LAST_BODY
+    Logs:   pm2 logs noteracy --lines 50"
+fi
 step "Rolling back to $(git rev-parse --short "$PREV_SHA")"
 
 git reset --hard "$PREV_SHA" || warn "git rollback failed"

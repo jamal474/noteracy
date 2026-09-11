@@ -1,5 +1,5 @@
-# __DOMAIN__ — HTTPS vhost, rendered by deploy/setup.sh once a certificate
-# exists. Edit the template, not the rendered file.
+# __DOMAIN__ — HTTPS vhost. managed-by: noteracy-setup
+# Rendered by deploy/setup.sh; edit the template, not the rendered file.
 
 upstream noteracy_app {
     server 127.0.0.1:__PORT__;

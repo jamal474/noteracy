@@ -294,6 +294,19 @@ ok "vhost → $VHOST_FILE"
 BACKUP_DIR=/etc/nginx/noteracy-disabled
 install -d -m 755 "$BACKUP_DIR"
 
+# One domain per box. The templates hardcode the upstream names, so a vhost
+# left over from a previous --domain would collide with "duplicate upstream".
+for other in /etc/nginx/sites-enabled/*; do
+  [ -e "$other" ] || continue
+  name="$(basename "$other")"
+  [ "$name" = "$(basename "$VHOST_FILE")" ] && continue
+  target="$(readlink -f "$other")"
+  if [ -f "$target" ] && grep -q "managed-by: noteracy-setup" "$target" 2>/dev/null; then
+    mv "$other" "$BACKUP_DIR/$name"
+    note "retired our older vhost for $name"
+  fi
+done
+
 DISABLED=0
 for f in /etc/nginx/sites-enabled/default /etc/nginx/conf.d/default.conf; do
   [ -e "$f" ] || continue
