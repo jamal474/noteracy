@@ -8,7 +8,7 @@ const Footer = () => {
       <span>&copy; {currentYear} Noteracy</span>
       <Separator.Root orientation="vertical" className="w-px h-3 bg-[var(--color-border)]" />
       <a
-        href="https://github.com/jamal474/NoteracyApp"
+        href="https://github.com/jamal474/noteracy"
         className="flex items-center gap-1 hover:text-[var(--color-fg)] transition-colors"
         target="_blank"
         rel="noopener noreferrer"
