@@ -7,7 +7,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "_comment_build": "--include=dev is required: NODE_ENV=production (set for the runtime, so server.js serves the built client) makes npm omit devDependencies, and tailwind.config.js require()s @tailwindcss/typography from there.",
     "build": "npm install --prefix client --include=dev && npm run build --prefix client",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },

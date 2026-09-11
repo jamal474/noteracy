@@ -37,10 +37,7 @@ passport.use(new GoogleStrategy({
 
 router.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
 
-// Where to send the browser once Google is done with it. In production this
-// is the absolute short-domain URL (https://<short-domain>/notes); falling
-// back to BASE_PATH keeps the redirects working as same-origin paths when
-// CLIENT_URL isn't set, instead of bouncing to the domain root.
+// Where Google sends the browser back to; falls back to a same-origin path.
 const clientUrl = (process.env.CLIENT_URL || BASE_PATH).replace(/\/+$/, '');
 const successLoginUrl = `${clientUrl}/dashboard`;
 const errorLoginUrl = `${clientUrl}/error`;

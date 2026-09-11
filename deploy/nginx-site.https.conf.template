@@ -1,0 +1,109 @@
+# __DOMAIN__ — HTTPS vhost, rendered by deploy/setup.sh once a certificate
+# exists. Edit the template, not the rendered file.
+
+upstream noteracy_app {
+    server 127.0.0.1:__PORT__;
+    keepalive 32;
+}
+
+upstream noteracy_hook {
+    server 127.0.0.1:__HOOK_PORT__;
+    keepalive 2;
+}
+
+# Port 80: ACME challenges and redirects only.
+server {
+    listen      80 default_server;
+    listen      [::]:80 default_server;
+    server_name __DOMAIN__ _;
+
+    server_tokens off;
+
+    location ^~ /.well-known/acme-challenge/ {
+        root /var/www/html;
+        allow all;
+    }
+
+    location / {
+        return 301 https://__DOMAIN__$request_uri;
+    }
+}
+
+# Port 443: the real thing.
+server {
+    listen      443 ssl __H2__ default_server;
+    listen      [::]:443 ssl __H2__ default_server;
+__HTTP2ON__
+    server_name __DOMAIN__ _;
+
+    ssl_certificate         /etc/letsencrypt/live/__DOMAIN__/fullchain.pem;
+    ssl_certificate_key     /etc/letsencrypt/live/__DOMAIN__/privkey.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/__DOMAIN__/chain.pem;
+
+    # TLS 1.2 stays for older mobile clients.
+    ssl_protocols             TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers off;
+    ssl_ciphers               ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305;
+    ssl_session_cache         shared:SSL:10m;
+    ssl_session_timeout       1d;
+    ssl_session_tickets       off;
+    ssl_stapling              on;
+    ssl_stapling_verify       on;
+
+    client_max_body_size 16m;
+    server_tokens off;
+
+    gzip            on;
+    gzip_vary       on;
+    gzip_proxied    any;
+    gzip_min_length 1024;
+    gzip_comp_level 5;
+    gzip_types      text/plain text/css text/xml application/json application/javascript
+                    application/xml+rss image/svg+xml;
+
+    # One year, no preload. Browsers cache this until it expires.
+    add_header Strict-Transport-Security "max-age=31536000" always;
+    add_header X-Content-Type-Options    nosniff always;
+    add_header X-Frame-Options           SAMEORIGIN always;
+    add_header Referrer-Policy           strict-origin-when-cross-origin always;
+
+    access_log /var/log/nginx/__DOMAIN__.access.log;
+    error_log  /var/log/nginx/__DOMAIN__.error.log;
+
+    # Deploy webhook. Reachable only on this hostname; authenticated by the
+    # HMAC signature in webhook.js.
+    location = /__deploy {
+        limit_req zone=noteracyhook burst=3 nodelay;
+
+        proxy_pass         http://noteracy_hook;
+        proxy_http_version 1.1;
+        proxy_set_header   Connection "";
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+
+        # GitHub's HMAC covers the raw body; pass it through unaltered.
+        proxy_request_buffering on;
+        proxy_read_timeout 30s;
+    }
+
+    location / {
+        limit_req  zone=noteracyzone burst=40 nodelay;
+        limit_conn noteracyconn 24;
+
+        proxy_pass         http://noteracy_app;
+        proxy_http_version 1.1;
+        proxy_set_header   Connection "";
+
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        # Overwrite, not append: after real_ip, $remote_addr is the true
+        # client, and TRUST_PROXY=1 expects exactly this single entry.
+        proxy_set_header X-Forwarded-For   $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host  $host;
+
+        proxy_connect_timeout 10s;
+        proxy_read_timeout    60s;
+        proxy_send_timeout    60s;
+    }
+}
